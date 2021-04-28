@@ -1,12 +1,16 @@
 package com.github.novotnyr.android.dolondyna
 
 import android.Manifest.permission.ACCESS_FINE_LOCATION
+import android.annotation.SuppressLint
+import android.location.Location
 import android.os.Bundle
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.core.content.PermissionChecker.PERMISSION_GRANTED
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 
 class MainActivity : AppCompatActivity() {
     private val locationPermission =
@@ -18,9 +22,13 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+    private lateinit var locationProvider: FusedLocationProviderClient
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        locationProvider = LocationServices.getFusedLocationProviderClient(this)
     }
 
     fun onCompassImageViewClick(view: View) {
@@ -30,7 +38,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("MissingPermission")
     fun showLocation() {
-        TODO("Zobraziť polohu")
+        locationProvider.lastLocation.addOnSuccessListener { location: Location? ->
+            location?.let {
+                title = "Poloha: %.2f:%.2f".format(location.latitude, location.longitude)
+            }
+        }
     }
 }
