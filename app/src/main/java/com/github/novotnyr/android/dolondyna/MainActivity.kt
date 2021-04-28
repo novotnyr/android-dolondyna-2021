@@ -2,6 +2,7 @@ package com.github.novotnyr.android.dolondyna
 
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.location.Location
 import android.os.Bundle
 import android.view.View
@@ -45,5 +46,6 @@ class MainActivity : AppCompatActivity() {
                 title = "Poloha: %.2f:%.2f".format(location.latitude, location.longitude)
             }
         }
+        startService(Intent(this, LocationService::class.java))
     }
 }
