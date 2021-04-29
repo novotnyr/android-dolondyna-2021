@@ -11,6 +11,7 @@ import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import org.greenrobot.eventbus.EventBus
 
 const val TAG = "LocationService"
 
@@ -30,6 +31,7 @@ class LocationService : Service() {
                 "%.2f:%.2f".format(location.latitude, location.longitude)
             Log.i(TAG, message)
             notificationManager.notify(NOTIFICATION_ID, createNotification(message))
+            EventBus.getDefault().post(location)
         }
         notificationManager = NotificationManagerCompat.from(this)
         createNotificationChannel()
