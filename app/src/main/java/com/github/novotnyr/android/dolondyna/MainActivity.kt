@@ -30,11 +30,14 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var locationProvider: FusedLocationProviderClient
 
+    private lateinit var compassImageView: ImageView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         locationProvider = LocationServices.getFusedLocationProviderClient(this)
+        compassImageView = findViewById(R.id.compassImageView)
     }
 
     fun onCompassImageViewClick(view: View) {
@@ -66,6 +69,8 @@ class MainActivity : AppCompatActivity() {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun update(location: Location) {
-        Log.i("ACTIVITY", location.toString())
+        compassImageView
+            .animate()
+            .rotation(location.bearingTo(LONDON))
     }
 }
