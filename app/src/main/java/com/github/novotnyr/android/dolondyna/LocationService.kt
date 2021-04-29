@@ -7,11 +7,14 @@ import android.content.Intent
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
+import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 
 const val TAG = "LocationService"
 
 const val CHANNEL_ID = "0"
+
+const val NOTIFICATION_ID = 1
 
 class LocationService : Service() {
     private lateinit var locationManager: LocationManager
@@ -24,6 +27,7 @@ class LocationService : Service() {
             val message =
                 "%.2f:%.2f".format(location.latitude, location.longitude)
             Log.i(TAG, message)
+            notificationManager.notify(NOTIFICATION_ID, createNotification(message))
         }
         notificationManager = NotificationManagerCompat.from(this)
         createNotificationChannel()
@@ -34,6 +38,8 @@ class LocationService : Service() {
         flags: Int,
         startId: Int
     ): Int {
+        startForeground(NOTIFICATION_ID, createNotification())
+
         locationManager.start()
         return START_NOT_STICKY
     }
@@ -53,4 +59,12 @@ class LocationService : Service() {
             CHANNEL_ID, "Aktuálna poloha", IMPORTANCE_DEFAULT
         ).let(notificationManager::createNotificationChannel)
     }
+
+    private fun createNotification(location: String = "Neznáma poloha") =
+        NotificationCompat.Builder(this, CHANNEL_ID)
+            .setContentTitle("Aktuálna poloha")
+            .setContentText(location)
+            .setAutoCancel(true)
+            .setSmallIcon(R.mipmap.ic_launcher)
+            .build()
 }
