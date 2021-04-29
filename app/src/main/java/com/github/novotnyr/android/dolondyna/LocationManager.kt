@@ -10,6 +10,11 @@ import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import java.util.concurrent.TimeUnit
 
+val LONDON = Location("").apply {
+    latitude = 51.509865
+    longitude = -0.118092
+}
+
 class LocationManager(
     context: Context,
     locationListener: (Location) -> Unit = {}
