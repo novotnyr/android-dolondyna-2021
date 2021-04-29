@@ -2,8 +2,10 @@ package com.github.novotnyr.android.dolondyna
 
 import android.app.NotificationChannel
 import android.app.NotificationManager.IMPORTANCE_DEFAULT
+import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
+import android.content.Intent.ACTION_DELETE
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
@@ -38,9 +40,12 @@ class LocationService : Service() {
         flags: Int,
         startId: Int
     ): Int {
-        startForeground(NOTIFICATION_ID, createNotification())
-
-        locationManager.start()
+        if (intent?.action == ACTION_DELETE) {
+            stopSelf()
+        } else {
+            startForeground(NOTIFICATION_ID, createNotification())
+            locationManager.start()
+        }
         return START_NOT_STICKY
     }
 
@@ -66,5 +71,16 @@ class LocationService : Service() {
             .setContentText(location)
             .setAutoCancel(true)
             .setSmallIcon(R.mipmap.ic_launcher)
+            .addAction(android.R.drawable.ic_delete,
+                "Zastaviť",
+                getStopPendingIntent()
+            )
             .build()
+
+    private fun getStopPendingIntent() =
+        Intent(this, LocationService::class.java)
+            .setAction(ACTION_DELETE)
+            .let {
+                PendingIntent.getService(this, 0, it, 0)
+            }
 }
